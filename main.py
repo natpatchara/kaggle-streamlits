@@ -53,25 +53,19 @@ def load_image(patient_id, path):
 def main():
     st.title("DICOM-imageviewer")
 
-    
-
     with st.form(key='Model_form') :
-        ani = None
-        label = None
         id = st.selectbox("Select pateint ID:", os.listdir(path))
+        show_label = st.checkbox("Show label")
         submitted = st.form_submit_button('Submit')
         
     if (submitted):
         datas = load_image(id,path)
         label = train_label[train_label["FolderID"] == id]
         ani = show_animation(datas)
-        submitted = False
 
-    if(ani is not None):   
-      components.html(ani.to_jshtml(), height=1000)
-      show_label = st.checkbox("Show label")
-      if(show_label):
-        st.write("Label:", label["Diagnosis"].values[0].split("-")[0])    
+        components.html(ani.to_jshtml(), height=1000)
+        if(show_label):
+          st.write("Label:", label["Diagnosis"].values[0].split("-")[0])    
 
 if __name__ == '__main__':
 	main()
