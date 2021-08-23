@@ -10,7 +10,9 @@ import streamlit.components.v1 as components
 PAGE_CONFIG = {"page_title":"DICOM-imageviewer","page_icon":":smiley:","layout":"centered"}
 st.set_page_config(**PAGE_CONFIG)
 path = "dicom-flair/dicom-flair"
+train_label = pd.read_csv("data.csv")
 
+@st.cache
 def show_animation(images, figsize = (6,6), fps = 5):
     fig = plt.figure(figsize = figsize)
     plt.axis("off")
@@ -21,7 +23,8 @@ def show_animation(images, figsize = (6,6), fps = 5):
         return [im]
     
     return animation.FuncAnimation(fig, animate_func, frames=len(images), interval = 1000//fps)
-  
+
+@st.cache  
 def load_slice(path):
     #load dicom file
     data = pydicom.read_file(path)
@@ -35,7 +38,8 @@ def load_slice(path):
     data = (data * 255).astype(np.uint8)
     
     return data
-    
+
+@st.cache 
 def load_image(patient_id, path):
     
     patient_folder = os.path.join(path,patient_id)
@@ -59,8 +63,10 @@ def main():
 
     if (submitted):
         datas = load_image(id,path)
+        label = train_label[train_label["Folder_ID"] == id]
         ani = show_animation(datas)
         components.html(ani.to_jshtml(), height=1000)
+        st.write("Label:", label["Diagnosis"].values[0].split("-")[0])
  
 
 if __name__ == '__main__':
