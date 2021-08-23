@@ -12,7 +12,6 @@ st.set_page_config(**PAGE_CONFIG)
 path = "dicom-flair/dicom-flair"
 train_label = pd.read_csv("data.csv")
 
-@st.cache
 def show_animation(images, figsize = (6,6), fps = 5):
     fig = plt.figure(figsize = figsize)
     plt.axis("off")
@@ -24,7 +23,6 @@ def show_animation(images, figsize = (6,6), fps = 5):
     
     return animation.FuncAnimation(fig, animate_func, frames=len(images), interval = 1000//fps)
 
-@st.cache  
 def load_slice(path):
     #load dicom file
     data = pydicom.read_file(path)
@@ -39,7 +37,6 @@ def load_slice(path):
     
     return data
 
-@st.cache 
 def load_image(patient_id, path):
     
     patient_folder = os.path.join(path,patient_id)
@@ -53,21 +50,24 @@ def load_image(patient_id, path):
             
     return datas
 
-
 def main():
     st.title("DICOM-imageviewer")
 
     with st.form(key='Model_form') :
         id = st.selectbox("Select pateint ID:", os.listdir(path))
         submitted = st.form_submit_button('Submit')
+        
 
     if (submitted):
         datas = load_image(id,path)
         label = train_label[train_label["FolderID"] == id]
         ani = show_animation(datas)
-        components.html(ani.to_jshtml(), height=1000)
-        st.write("Label:", label["Diagnosis"].values[0].split("-")[0])
- 
+        submitted = False
+        
+    components.html(ani.to_jshtml(), height=1000)
+    show_label = st.checkbox("Show label")
+    if(show_label):
+      st.write("Label:", label["Diagnosis"].values[0].split("-")[0])    
 
 if __name__ == '__main__':
 	main()
