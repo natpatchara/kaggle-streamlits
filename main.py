@@ -65,7 +65,7 @@ def main():
 
         components.html(ani.to_jshtml(), height=1000)
         if(show_label):
-          label = train_label[train_label["FolderID"] == id]
+          label = train_label[train_label["FolderID"] == int(id)]
           st.dataframe(label)    
 
 if __name__ == '__main__':
