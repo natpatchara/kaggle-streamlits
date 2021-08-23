@@ -60,12 +60,13 @@ def main():
         
     if (submitted):
         datas = load_image(id,path)
-        label = train_label[train_label["FolderID"] == id]
+        
         ani = show_animation(datas)
 
         components.html(ani.to_jshtml(), height=1000)
         if(show_label):
-          st.write("Label:", label["Diagnosis"].values[0].split("-")[0])    
+          label = train_label[train_label["FolderID"] == id]
+          st.dataframe(label)    
 
 if __name__ == '__main__':
 	main()
