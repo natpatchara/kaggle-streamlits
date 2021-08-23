@@ -63,7 +63,7 @@ def main():
 
     if (submitted):
         datas = load_image(id,path)
-        label = train_label[train_label["Folder_ID"] == id]
+        label = train_label[train_label["FolderID"] == id]
         ani = show_animation(datas)
         components.html(ani.to_jshtml(), height=1000)
         st.write("Label:", label["Diagnosis"].values[0].split("-")[0])
